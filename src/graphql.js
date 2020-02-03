@@ -14,6 +14,7 @@ export const userTasks = gql`
         status
         orid
         note
+        createdAt
         offerRequest {
           orid
           bethMoveInReadyDate
@@ -45,7 +46,50 @@ export const userTasks = gql`
             moveOutDatetime
           }
         }
-        createdAt
+      }
+    }
+  }
+`;
+
+export const createTask = gql`
+  mutation($taskInput: CreateTaskInput!) {
+    createTask(taskInput: $taskInput) {
+      id
+      type
+      status
+      orid
+      note
+      createdAt
+      offerRequest {
+        orid
+        bethMoveInReadyDate
+        seller {
+          name
+          phoneNumber
+        }
+        sellerSuccessAgent {
+          name
+        }
+        heroImage {
+          url
+        }
+        lockBoxCode
+        homeInspectionNote
+        property {
+          propertyId
+          fullAddress
+          address
+          city
+          zip
+          state
+          bedrooms
+          bathrooms
+          sqft
+          gateCode
+          yearBuilt
+          hasSeptic
+          moveOutDatetime
+        }
       }
     }
   }

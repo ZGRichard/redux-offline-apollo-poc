@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Button,
   SafeAreaView,
@@ -15,26 +15,47 @@ import {
   View,
   Text,
   StatusBar,
+  RefreshControl,
 } from 'react-native';
 import {Provider} from 'react-redux';
 import moment from 'moment';
+import uuid from 'uuid/v4';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 import store from './store';
-import {fetchTasks} from './actions';
+import {fetchTasks, createTask} from './actions';
 
 import Tasks from './Tasks';
 
 const App = () => {
-  const onPressFetchTasks = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const onPressFetchTasks = async () => {
     const endDateTimeUtc = moment()
       .endOf('day')
       .utc()
       .seconds(0)
       .format();
 
-    store.dispatch(fetchTasks('2020-01-04T08:00:00Z', endDateTimeUtc));
+    setRefreshing(true);
+    try {
+      await store.dispatch(fetchTasks('2020-01-04T08:00:00Z', endDateTimeUtc));
+    } catch (err) {
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  const onPressCreateTask = () => {
+    const task = {
+      id: uuid(),
+      orid: 'X1-ORz284nctpse4a_ic76i',
+      type: 'EVALUATION',
+      salesforceId: 'test',
+      status: 'HAS_NOT_STARTED',
+    };
+
+    store.dispatch(createTask(task));
   };
 
   return (
@@ -42,10 +63,15 @@ const App = () => {
       <StatusBar barStyle="dark-content" />
       <SafeAreaView style={{flex: 1}}>
         <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onPressFetchTasks}
+            />
+          }
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
-          <Button title="Fetch Tasks" onPress={onPressFetchTasks} />
-          <Button title="Create Task" />
+          <Button title="Create Task" onPress={onPressCreateTask} />
           <Button title="In Progress" />
           <Button title="Submit Task" />
 

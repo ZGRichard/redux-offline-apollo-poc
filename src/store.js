@@ -1,5 +1,6 @@
 import {applyMiddleware, compose, createStore} from 'redux';
 import {createEpicMiddleware} from 'redux-observable';
+import thunk from 'redux-thunk';
 import {offline} from '@redux-offline/redux-offline';
 import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 
@@ -9,8 +10,10 @@ import client from './apollo-client';
 const effect = async (_effect, _action) => {
   console.log('run this effect', _effect);
 
-  const res = await client.query({
-    query: _effect.query,
+  // Mutations are the only ones that need to be
+  // handled by redux-offline
+  const res = await client.mutate({
+    mutation: _effect.mutation,
     variables: _effect.variables,
     errorPolicy: 'all',
   });
@@ -23,10 +26,9 @@ const effect = async (_effect, _action) => {
 const discard = (error, _action, _retries) => {
   const {response} = error;
 
-  console.log('error', error);
+  console.log('error', {...error});
   console.log('discard action', _action);
   console.log('discard retries', _retries);
-  console.log('response', response);
 
   // _action.meta.offline.retryOn.includes(response.status);
 
@@ -46,7 +48,7 @@ const configureStore = initialState => {
     initialState,
     compose(
       offline({...offlineConfig, effect, discard}),
-      enhancedApplyMiddleware(epicMiddleware),
+      enhancedApplyMiddleware(epicMiddleware, thunk),
     ),
   );
 };

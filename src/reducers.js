@@ -1,6 +1,6 @@
 import {combineReducers} from 'redux';
 import {keyBy} from 'lodash';
-import {FETCH_TASKS_COMMIT} from './actions';
+import {FETCH_TASKS_COMMIT, CREATE_TASK} from './actions';
 
 const initialState = {
   tasks: {},
@@ -13,6 +13,15 @@ const entitiesReducer = (state = initialState, action) => {
       return {
         ...state,
         tasks: keyBy(action.payload.data.userTasks.content, 'id'),
+      };
+    }
+    case CREATE_TASK: {
+      return {
+        ...state,
+        tasks: {
+          ...state.tasks,
+          [action.payload.id]: action.payload,
+        },
       };
     }
     default:
