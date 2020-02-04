@@ -6,7 +6,7 @@ import {
   START_TASK,
   START_TASK_ROLLBACK,
   SUBMIT_TASK,
-  COMPLETE_TASK,
+  COMPLETE_TASK_COMMIT,
 } from './actions';
 
 const initialState = {
@@ -67,7 +67,7 @@ const entitiesReducer = (state = initialState, action) => {
         },
       };
     }
-    case COMPLETE_TASK: {
+    case COMPLETE_TASK_COMMIT: {
       return {
         ...state,
         tasks: {

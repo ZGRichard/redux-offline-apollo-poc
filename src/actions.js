@@ -53,10 +53,10 @@ export const createTask = task => {
           },
           discardOn: [409],
         },
-      },
-      commit: {
-        type: CREATE_TASK_COMMIT,
-        meta: {task},
+        commit: {
+          type: CREATE_TASK_COMMIT,
+          meta: {task},
+        },
       },
     },
   };
@@ -77,14 +77,14 @@ export const startTask = taskId => {
             },
           },
         },
-      },
-      commit: {
-        type: START_TASK_COMMIT,
-        meta: {taskId},
-      },
-      rollback: {
-        type: START_TASK_ROLLBACK,
-        meta: {taskId},
+        commit: {
+          type: START_TASK_COMMIT,
+          meta: {taskId},
+        },
+        rollback: {
+          type: START_TASK_ROLLBACK,
+          meta: {taskId},
+        },
       },
     },
   };
@@ -105,14 +105,14 @@ export const submitTask = taskId => {
             },
           },
         },
-      },
-      commit: {
-        type: SUBMIT_TASK_COMMIT,
-        meta: {taskId},
-      },
-      rollback: {
-        type: SUBMIT_TASK_ROLLBACK,
-        meta: {taskId},
+        commit: {
+          type: SUBMIT_TASK_COMMIT,
+          meta: {taskId},
+        },
+        rollback: {
+          type: SUBMIT_TASK_ROLLBACK,
+          meta: {taskId},
+        },
       },
     },
   };
@@ -133,14 +133,14 @@ export const completeTask = taskId => {
             },
           },
         },
-      },
-      commit: {
-        type: COMPLETE_TASK_COMMIT,
-        meta: {taskId},
-      },
-      rollback: {
-        type: COMPLETE_TASK_ROLLBACK,
-        meta: {taskId},
+        commit: {
+          type: COMPLETE_TASK_COMMIT,
+          meta: {taskId},
+        },
+        rollback: {
+          type: COMPLETE_TASK_ROLLBACK,
+          meta: {taskId},
+        },
       },
     },
   };
