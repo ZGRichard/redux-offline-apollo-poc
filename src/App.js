@@ -30,6 +30,7 @@ import Tasks from './Tasks';
 
 const App = () => {
   const [refreshing, setRefreshing] = useState(false);
+
   const onPressFetchTasks = async () => {
     const endDateTimeUtc = moment()
       .endOf('day')
@@ -49,6 +50,7 @@ const App = () => {
   const onPressCreateTask = () => {
     const task = {
       id: uuid(),
+      // id: 'ab3bf5d7-16e2-4e1e-b5ca-4b9f976a4206',
       orid: 'X1-ORz284nctpse4a_ic76i',
       type: 'EVALUATION',
       salesforceId: 'test',
@@ -72,9 +74,7 @@ const App = () => {
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
           <Button title="Create Task" onPress={onPressCreateTask} />
-          <Button title="In Progress" />
-          <Button title="Submit Task" />
-
+          <View style={{margin: 20}} />
           <Tasks />
         </ScrollView>
       </SafeAreaView>

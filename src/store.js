@@ -6,6 +6,7 @@ import offlineConfig from '@redux-offline/redux-offline/lib/defaults';
 
 import reducers from './reducers';
 import client from './apollo-client';
+import {taskSubmitEpic} from './epics';
 
 const effect = async (_effect, _action) => {
   console.log('run this effect', _effect);
@@ -20,17 +21,44 @@ const effect = async (_effect, _action) => {
 
   console.log('res', res);
 
+  if (res.errors) {
+    res.errors.forEach(error => {
+      if (error.extensions.exception && error.extensions.exception.statusCode) {
+        throw error;
+      }
+    });
+  }
+
   return res;
 };
 
 const discard = (error, _action, _retries) => {
-  const {response} = error;
+  const {response, extensions} = error;
 
   console.log('error', {...error});
   console.log('discard action', _action);
   console.log('discard retries', _retries);
 
-  // _action.meta.offline.retryOn.includes(response.status);
+  if (extensions && extensions.exception && extensions.exception.statusCode) {
+    console.log(
+      'extensions.exception.statusCode',
+      extensions.exception.statusCode,
+    );
+
+    if (
+      _action.meta.offline.effect.discardOn &&
+      _action.meta.offline.effect.discardOn.includes(
+        extensions.exception.statusCode,
+      )
+    ) {
+      return true;
+    }
+
+    return (
+      400 <= extensions.exception.statusCode &&
+      extensions.exception.statusCode < 500
+    );
+  }
 
   return response && 400 <= response.status && response.status < 500;
 };
@@ -43,7 +71,7 @@ const enhancedApplyMiddleware = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
   : (...args) => applyMiddleware(...args);
 
 const configureStore = initialState => {
-  return createStore(
+  const store = createStore(
     reducers,
     initialState,
     compose(
@@ -51,6 +79,10 @@ const configureStore = initialState => {
       enhancedApplyMiddleware(epicMiddleware, thunk),
     ),
   );
+
+  epicMiddleware.run(taskSubmitEpic);
+
+  return store;
 };
 
 export default configureStore();
